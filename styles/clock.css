@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Digital-7';
+  src: url('chrome-extension://__MSG_@@extension_id__/fonts/digital-7.ttf') format('truetype');
+}
+
+#yt-fullscreen-clock {
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Theme-specific styles */
+#yt-fullscreen-clock[data-theme="minimal"] {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#yt-fullscreen-clock[data-theme="modern"] {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0.5px;
+}
+
+#yt-fullscreen-clock[data-theme="retro"] {
+  font-family: 'Digital-7', monospace;
+  text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+  letter-spacing: 1px;
+}
+
+#yt-fullscreen-clock[data-theme="elegant"] {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.8px;
+}
+
+/* Ensure clock is visible in theater mode */
+#player-theater-container #yt-fullscreen-clock {
+  position: absolute;
+}
+
+/* Adjust visibility when hovering over YouTube controls */
+.ytp-chrome-controls:hover ~ #yt-fullscreen-clock,
+.ytp-chrome-controls:focus-within ~ #yt-fullscreen-clock {
+  opacity: 0.3 !important;
+} 
