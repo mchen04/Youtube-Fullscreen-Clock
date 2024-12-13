@@ -72,6 +72,7 @@ main {
   border-radius: 12px;
   padding: 16px;
   margin-bottom: 16px;
+  position: relative;
 }
 
 .youtube-mock {
@@ -336,4 +337,18 @@ input:checked + .slider:before {
   .preview-section {
     position: static;
   }
+} 
+
+/* Snap Indicators */
+.snap-indicator {
+  position: absolute;
+  background-color: var(--yt-focus-color);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 1000;
+}
+
+.preview-container {
+  position: relative; /* Ensure snap indicators are contained */
 } 

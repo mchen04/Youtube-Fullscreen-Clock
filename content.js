@@ -45,10 +45,45 @@ class YouTubeFullscreenClock {
   }
 
   updateClockPosition() {
-    if (this.clockElement) {
-      this.clockElement.style.right = `${this.settings.position.x}px`;
-      this.clockElement.style.top = `${this.settings.position.y}px`;
+    if (!this.clockElement) return;
+
+    const PADDING = 20;
+    const pos = this.settings.position;
+    const container = document.fullscreenElement || document.getElementById('player-theater-container');
+    
+    if (!container) return;
+    
+    const containerRect = container.getBoundingClientRect();
+
+    // Calculate position based on ratios
+    let x, y;
+
+    // Calculate y position
+    if (pos.yRatio === 0) { // Top
+      y = PADDING;
+    } else if (pos.yRatio === 0.5) { // Middle
+      y = (containerRect.height / 2) - (this.clockElement.offsetHeight / 2);
+    } else if (pos.yRatio === 1) { // Bottom
+      y = containerRect.height - this.clockElement.offsetHeight - PADDING;
+    } else {
+      y = pos.y; // Fallback to absolute position
     }
+
+    // Calculate x position (using right alignment)
+    if (pos.xRatio === 0) { // Left
+      x = PADDING;
+    } else if (pos.xRatio === 0.5) { // Center
+      x = (containerRect.width / 2) - (this.clockElement.offsetWidth / 2);
+      x = containerRect.width - x - this.clockElement.offsetWidth; // Convert to right alignment
+    } else if (pos.xRatio === 1) { // Right
+      x = containerRect.width - this.clockElement.offsetWidth - PADDING;
+    } else {
+      x = pos.x; // Fallback to absolute position
+    }
+
+    // Apply the calculated position
+    this.clockElement.style.right = `${x}px`;
+    this.clockElement.style.top = `${y}px`;
   }
 
   updateClockAppearance() {
@@ -153,6 +188,13 @@ class YouTubeFullscreenClock {
     if (playerContainer) {
       observer.observe(playerContainer, { attributes: true });
     }
+
+    // Add resize listener
+    window.addEventListener('resize', () => {
+      if (this.isFullscreen || document.getElementById('player-theater-container')) {
+        this.updateClockPosition();
+      }
+    });
   }
 
   setupMessageListener() {
@@ -205,6 +247,7 @@ class YouTubeFullscreenClock {
     
     if (isNativeFullscreen && this.settings.enabled) {
       this.showClock();
+      this.updateClockPosition();
     } else {
       this.hideClock();
     }
@@ -216,6 +259,7 @@ class YouTubeFullscreenClock {
     
     if (isTheaterMode && this.settings.enabled) {
       this.showClock();
+      this.updateClockPosition();
     } else if (!isTheaterMode) {
       this.hideClock();
     }

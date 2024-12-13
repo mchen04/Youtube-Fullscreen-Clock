@@ -71,6 +71,8 @@ class DashboardManager {
     let isDragging = false;
     let startX, startY;
     let originalX, originalY;
+    const SNAP_THRESHOLD = 15; // Distance in pixels to trigger snapping
+    const PADDING = 20;
 
     this.previewClock.addEventListener('mousedown', (e) => {
       isDragging = true;
@@ -89,13 +91,74 @@ class DashboardManager {
       const deltaY = e.clientY - startY;
       
       const container = this.previewClock.parentElement;
-      const newX = Math.max(0, Math.min(container.clientWidth - this.previewClock.offsetWidth, originalX + deltaX));
-      const newY = Math.max(0, Math.min(container.clientHeight - this.previewClock.offsetHeight, originalY + deltaY));
+      const containerRect = container.getBoundingClientRect();
+      const clockRect = this.previewClock.getBoundingClientRect();
+      
+      // Calculate initial position
+      let newX = Math.max(
+        PADDING,
+        Math.min(
+          containerRect.width - clockRect.width - PADDING,
+          originalX + deltaX
+        )
+      );
+      
+      let newY = Math.max(
+        PADDING,
+        Math.min(
+          containerRect.height - clockRect.height - PADDING,
+          originalY + deltaY
+        )
+      );
+
+      // Edge snapping logic
+      const snapPoints = {
+        x: [
+          PADDING, // Left edge
+          containerRect.width - clockRect.width - PADDING, // Right edge
+          (containerRect.width - clockRect.width) / 2 // Center horizontally
+        ],
+        y: [
+          PADDING, // Top edge
+          containerRect.height - clockRect.height - PADDING, // Bottom edge
+          (containerRect.height - clockRect.height) / 2 // Center vertically
+        ]
+      };
+
+      // Snap to X positions
+      for (const snapX of snapPoints.x) {
+        if (Math.abs(newX - snapX) < SNAP_THRESHOLD) {
+          newX = snapX;
+          // Show snap indicator
+          this.showSnapIndicator('x', snapX);
+          break;
+        }
+      }
+
+      // Snap to Y positions
+      for (const snapY of snapPoints.y) {
+        if (Math.abs(newY - snapY) < SNAP_THRESHOLD) {
+          newY = snapY;
+          // Show snap indicator
+          this.showSnapIndicator('y', snapY);
+          break;
+        }
+      }
       
       this.previewClock.style.right = `${newX}px`;
       this.previewClock.style.top = `${newY}px`;
       
-      this.settings.position = { x: newX, y: newY };
+      // Calculate ratios for the actual video player
+      const xRatio = (containerRect.width - newX - clockRect.width / 2) / containerRect.width;
+      const yRatio = (newY + clockRect.height / 2) / containerRect.height;
+      
+      this.settings.position = {
+        x: newX,
+        y: newY,
+        xRatio,
+        yRatio
+      };
+      
       this.saveSettings();
     });
 
@@ -103,34 +166,64 @@ class DashboardManager {
       if (isDragging) {
         isDragging = false;
         this.previewClock.style.cursor = 'move';
+        this.hideSnapIndicators();
       }
     });
   }
 
   handlePresetPosition(position) {
+    const PADDING = 20;
     const container = this.previewClock.parentElement;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
-    const clockWidth = this.previewClock.offsetWidth;
-    const clockHeight = this.previewClock.offsetHeight;
+    const containerRect = container.getBoundingClientRect();
     
+    // Define positions using ratios (0 = left, 0.5 = center, 1 = right)
     const positions = {
-      'top-left': { x: width - clockWidth - 20, y: 20 },
-      'top-center': { x: (width - clockWidth) / 2, y: 20 },
-      'top-right': { x: 20, y: 20 },
-      'middle-left': { x: width - clockWidth - 20, y: (height - clockHeight) / 2 },
-      'middle-center': { x: (width - clockWidth) / 2, y: (height - clockHeight) / 2 },
-      'middle-right': { x: 20, y: (height - clockHeight) / 2 },
-      'bottom-left': { x: width - clockWidth - 20, y: height - clockHeight - 20 },
-      'bottom-center': { x: (width - clockWidth) / 2, y: height - clockHeight - 20 },
-      'bottom-right': { x: 20, y: height - clockHeight - 20 }
+      'top-left': { xRatio: 1, yRatio: 0 },      // Inverted because we're using right alignment
+      'top-center': { xRatio: 0.5, yRatio: 0 },
+      'top-right': { xRatio: 0, yRatio: 0 },     // Inverted because we're using right alignment
+      'middle-left': { xRatio: 1, yRatio: 0.5 },  // Inverted because we're using right alignment
+      'middle-center': { xRatio: 0.5, yRatio: 0.5 },
+      'middle-right': { xRatio: 0, yRatio: 0.5 }, // Inverted because we're using right alignment
+      'bottom-left': { xRatio: 1, yRatio: 1 },    // Inverted because we're using right alignment
+      'bottom-center': { xRatio: 0.5, yRatio: 1 },
+      'bottom-right': { xRatio: 0, yRatio: 1 }    // Inverted because we're using right alignment
     };
 
-    const newPos = positions[position];
-    if (newPos) {
-      this.previewClock.style.right = `${newPos.x}px`;
-      this.previewClock.style.top = `${newPos.y}px`;
-      this.settings.position = newPos;
+    const pos = positions[position];
+    if (pos) {
+      let x, y;
+
+      // Calculate y position
+      if (pos.yRatio === 0) { // Top
+        y = PADDING;
+      } else if (pos.yRatio === 0.5) { // Middle
+        y = (containerRect.height / 2) - (this.previewClock.offsetHeight / 2);
+      } else { // Bottom
+        y = containerRect.height - this.previewClock.offsetHeight - PADDING;
+      }
+
+      // Calculate x position (using right alignment)
+      if (pos.xRatio === 0) { // Right
+        x = PADDING;
+      } else if (pos.xRatio === 0.5) { // Center
+        x = (containerRect.width / 2) - (this.previewClock.offsetWidth / 2);
+        x = containerRect.width - x - this.previewClock.offsetWidth; // Convert to right alignment
+      } else { // Left
+        x = containerRect.width - this.previewClock.offsetWidth - PADDING;
+      }
+
+      // Update preview
+      this.previewClock.style.right = `${x}px`;
+      this.previewClock.style.top = `${y}px`;
+      
+      // Save settings with ratios
+      this.settings.position = {
+        x,
+        y,
+        xRatio: pos.xRatio,
+        yRatio: pos.yRatio
+      };
+      
       this.saveSettings();
     }
   }
@@ -307,6 +400,38 @@ class DashboardManager {
       this.updateUIFromSettings();
       this.saveSettings();
     }
+  }
+
+  // Add these helper methods to show visual feedback for snapping
+  showSnapIndicator(axis, position) {
+    let indicator = document.getElementById(`snap-indicator-${axis}`);
+    if (!indicator) {
+      indicator = document.createElement('div');
+      indicator.id = `snap-indicator-${axis}`;
+      indicator.className = 'snap-indicator';
+      this.previewClock.parentElement.appendChild(indicator);
+    }
+
+    if (axis === 'x') {
+      indicator.style.height = '100%';
+      indicator.style.width = '1px';
+      indicator.style.left = `${position}px`;
+      indicator.style.top = '0';
+    } else {
+      indicator.style.width = '100%';
+      indicator.style.height = '1px';
+      indicator.style.top = `${position}px`;
+      indicator.style.left = '0';
+    }
+
+    indicator.style.opacity = '1';
+  }
+
+  hideSnapIndicators() {
+    const indicators = document.querySelectorAll('.snap-indicator');
+    indicators.forEach(indicator => {
+      indicator.style.opacity = '0';
+    });
   }
 }
 
