@@ -2,144 +2,160 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>YouTube Fullscreen Clock - Settings</title>
+  <title>YouTube Clock Settings</title>
   <link rel="stylesheet" href="styles/dashboard.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <div class="dashboard-container">
     <header>
-      <h1>YouTube Fullscreen Clock Settings</h1>
+      <div class="logo">
+        <img src="assets/icons/icon48.png" alt="YouTube Clock">
+        <h1>YouTube Clock Settings</h1>
+      </div>
     </header>
-    
+
     <main>
-      <section class="preview-section">
-        <h2>Clock Position</h2>
-        <div class="preview-container">
-          <div class="youtube-mock">
-            <div class="video-area">
-              <div id="previewClock" class="preview-clock" draggable="true">12:00 PM</div>
+      <div class="settings-grid">
+        <!-- Preview Section -->
+        <section class="preview-section">
+          <h2>Clock Preview</h2>
+          <div class="preview-container">
+            <div class="youtube-mock">
+              <div class="video-area">
+                <div id="previewClock" class="preview-clock" draggable="true">12:00 PM</div>
+              </div>
+              <div class="controls-overlay"></div>
             </div>
-            <div class="controls-overlay">
-              <div class="progress-bar"></div>
-              <div class="playback-controls">
-                <div class="control-button"></div>
-                <div class="control-button"></div>
-                <div class="control-button"></div>
+          </div>
+          <div class="position-presets">
+            <button class="preset-btn" data-position="top-left" title="Top Left">↖️</button>
+            <button class="preset-btn" data-position="top-center" title="Top Center">⬆️</button>
+            <button class="preset-btn" data-position="top-right" title="Top Right">↗️</button>
+            <button class="preset-btn" data-position="middle-left" title="Middle Left">⬅️</button>
+            <button class="preset-btn" data-position="middle-center" title="Center">⏺️</button>
+            <button class="preset-btn" data-position="middle-right" title="Middle Right">➡️</button>
+            <button class="preset-btn" data-position="bottom-left" title="Bottom Left">↙️</button>
+            <button class="preset-btn" data-position="bottom-center" title="Bottom Center">⬇️</button>
+            <button class="preset-btn" data-position="bottom-right" title="Bottom Right">↘️</button>
+          </div>
+        </section>
+
+        <!-- Settings Sections -->
+        <div class="settings-sections">
+          <section class="settings-section">
+            <h2>
+              <span class="material-icons">schedule</span>
+              Display Settings
+            </h2>
+            <div class="setting-group">
+              <div class="setting-item">
+                <div class="setting-label">24-hour Format</div>
+                <label class="switch">
+                  <input type="checkbox" id="format24h">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <div class="setting-label">Show Seconds</div>
+                <label class="switch">
+                  <input type="checkbox" id="showSeconds">
+                  <span class="slider"></span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <div class="setting-label">Show Date</div>
+                <label class="switch">
+                  <input type="checkbox" id="showDate">
+                  <span class="slider"></span>
+                </label>
               </div>
             </div>
-          </div>
+          </section>
+
+          <section class="settings-section">
+            <h2>
+              <span class="material-icons">palette</span>
+              Appearance
+            </h2>
+            <div class="setting-group">
+              <div class="setting-item">
+                <div class="setting-label">Theme</div>
+                <select id="clockTheme" class="theme-select">
+                  <option value="minimal">Minimal</option>
+                  <option value="modern">Modern</option>
+                  <option value="retro">Retro Digital</option>
+                  <option value="elegant">Elegant</option>
+                </select>
+              </div>
+              
+              <div class="setting-item">
+                <div class="setting-label">Font Size</div>
+                <div class="slider-container">
+                  <input type="range" id="fontSize" min="12" max="32" step="2">
+                  <span class="value-display">16px</span>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">Opacity</div>
+                <div class="slider-container">
+                  <input type="range" id="opacity" min="20" max="100" step="10">
+                  <span class="value-display">80%</span>
+                </div>
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">Text Color</div>
+                <input type="color" id="textColor" value="#ffffff">
+              </div>
+
+              <div class="setting-item">
+                <div class="setting-label">Background Color</div>
+                <input type="color" id="bgColor" value="#000000">
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h2>
+              <span class="material-icons">settings</span>
+              General
+            </h2>
+            <div class="setting-group">
+              <div class="setting-item">
+                <div class="setting-label">Enable Clock</div>
+                <label class="switch">
+                  <input type="checkbox" id="clockEnabled">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-section">
+            <h2>
+              <span class="material-icons">backup</span>
+              Backup & Restore
+            </h2>
+            <div class="button-group">
+              <button id="exportSettings" class="secondary-button">
+                <span class="material-icons">file_download</span>
+                Export Settings
+              </button>
+              <button id="importSettings" class="secondary-button">
+                <span class="material-icons">file_upload</span>
+                Import Settings
+              </button>
+              <input type="file" id="settingsFile" accept=".json" style="display: none;">
+            </div>
+            <button id="resetAll" class="warning-button">
+              <span class="material-icons">restart_alt</span>
+              Reset All Settings
+            </button>
+          </section>
         </div>
-        <div class="position-presets">
-          <button class="preset-btn" data-position="top-left">↖️</button>
-          <button class="preset-btn" data-position="top-center">⬆️</button>
-          <button class="preset-btn" data-position="top-right">↗️</button>
-          <button class="preset-btn" data-position="middle-left">⬅️</button>
-          <button class="preset-btn" data-position="middle-center">⏺️</button>
-          <button class="preset-btn" data-position="middle-right">➡️</button>
-          <button class="preset-btn" data-position="bottom-left">↙️</button>
-          <button class="preset-btn" data-position="bottom-center">⬇️</button>
-          <button class="preset-btn" data-position="bottom-right">↘️</button>
-        </div>
-        <p class="helper-text">Drag the clock or use position presets</p>
-      </section>
-
-      <section class="settings-section">
-        <h2>Display Settings</h2>
-        
-        <div class="setting-group">
-          <h3>Clock Format</h3>
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="format24h">
-              <span class="slider"></span>
-            </label>
-            <span>24-hour Format</span>
-          </div>
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="showSeconds">
-              <span class="slider"></span>
-            </label>
-            <span>Show Seconds</span>
-          </div>
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="showDate">
-              <span class="slider"></span>
-            </label>
-            <span>Show Date</span>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <h3>Appearance</h3>
-          <div class="setting-item">
-            <label>Theme</label>
-            <select id="clockTheme">
-              <option value="minimal">Minimal</option>
-              <option value="modern">Modern</option>
-              <option value="retro">Retro Digital</option>
-              <option value="elegant">Elegant</option>
-            </select>
-          </div>
-          
-          <div class="setting-item">
-            <label>Font Size</label>
-            <input type="range" id="fontSize" min="12" max="32" step="2">
-            <span class="value-display">16px</span>
-          </div>
-
-          <div class="setting-item">
-            <label>Opacity</label>
-            <input type="range" id="opacity" min="20" max="100" step="10">
-            <span class="value-display">80%</span>
-          </div>
-
-          <div class="setting-item color-picker">
-            <label>Text Color</label>
-            <input type="color" id="textColor" value="#ffffff">
-          </div>
-
-          <div class="setting-item color-picker">
-            <label>Background Color</label>
-            <input type="color" id="bgColor" value="#000000">
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <h3>General</h3>
-          <div class="setting-item">
-            <label class="switch">
-              <input type="checkbox" id="clockEnabled">
-              <span class="slider"></span>
-            </label>
-            <span>Enable Clock</span>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <h3>Keyboard Shortcuts</h3>
-          <div class="shortcut-item">
-            <span>Toggle Clock:</span>
-            <kbd>Alt</kbd> + <kbd>C</kbd>
-          </div>
-          <div class="shortcut-item">
-            <span>Toggle Format:</span>
-            <kbd>Alt</kbd> + <kbd>F</kbd>
-          </div>
-        </div>
-
-        <div class="setting-group">
-          <h3>Backup & Restore</h3>
-          <div class="button-group">
-            <button id="exportSettings" class="secondary-button">Export Settings</button>
-            <button id="importSettings" class="secondary-button">Import Settings</button>
-            <input type="file" id="settingsFile" accept=".json" style="display: none;">
-          </div>
-        </div>
-
-        <button id="resetAll" class="warning-button">Reset All Settings</button>
-      </section>
+      </div>
     </main>
   </div>
   <script src="dashboard.js"></script>
