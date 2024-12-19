@@ -4,7 +4,11 @@ class YouTubeFullscreenClock {
     this.isFullscreen = false;
     this.settings = {
       enabled: true,
-      position: { x: 20, y: 20 },
+      position: { 
+        x: 20, 
+        y: 20,
+        corner: 'top-left'
+      },
       format24h: false,
       showSeconds: false,
       showDate: false,
@@ -48,42 +52,50 @@ class YouTubeFullscreenClock {
     if (!this.clockElement) return;
 
     const PADDING = 20;
-    const pos = this.settings.position;
     const container = document.fullscreenElement || document.getElementById('player-theater-container');
     
     if (!container) return;
     
     const containerRect = container.getBoundingClientRect();
+    const clockRect = this.clockElement.getBoundingClientRect();
 
-    // Calculate position based on ratios
     let x, y;
 
-    // Calculate y position
-    if (pos.yRatio === 0) { // Top
-      y = PADDING;
-    } else if (pos.yRatio === 0.5) { // Middle
-      y = (containerRect.height / 2) - (this.clockElement.offsetHeight / 2);
-    } else if (pos.yRatio === 1) { // Bottom
-      y = containerRect.height - this.clockElement.offsetHeight - PADDING;
-    } else {
-      y = pos.y; // Fallback to absolute position
-    }
-
-    // Calculate x position (using right alignment)
-    if (pos.xRatio === 0) { // Left
-      x = PADDING;
-    } else if (pos.xRatio === 0.5) { // Center
-      x = (containerRect.width / 2) - (this.clockElement.offsetWidth / 2);
-      x = containerRect.width - x - this.clockElement.offsetWidth; // Convert to right alignment
-    } else if (pos.xRatio === 1) { // Right
-      x = containerRect.width - this.clockElement.offsetWidth - PADDING;
-    } else {
-      x = pos.x; // Fallback to absolute position
+    // Handle preset corner positions
+    switch (this.settings.position.corner) {
+      case 'top-left':
+        x = PADDING;
+        y = PADDING;
+        break;
+      case 'top-right':
+        x = containerRect.width - clockRect.width - PADDING;
+        y = PADDING;
+        break;
+      case 'bottom-left':
+        x = PADDING;
+        y = containerRect.height - clockRect.height - PADDING;
+        break;
+      case 'bottom-right':
+        x = containerRect.width - clockRect.width - PADDING;
+        y = containerRect.height - clockRect.height - PADDING;
+        break;
+      case 'top-center':
+        x = (containerRect.width - clockRect.width) / 2;
+        y = PADDING;
+        break;
+      default:
+        // Custom position - use saved x,y coordinates
+        x = this.settings.position.x;
+        y = this.settings.position.y;
     }
 
     // Apply the calculated position
-    this.clockElement.style.right = `${x}px`;
+    this.clockElement.style.left = `${x}px`;
     this.clockElement.style.top = `${y}px`;
+    
+    // Update stored position
+    this.settings.position.x = x;
+    this.settings.position.y = y;
   }
 
   updateClockAppearance() {

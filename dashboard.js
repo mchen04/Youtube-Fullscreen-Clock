@@ -156,7 +156,9 @@ class DashboardManager {
         x: newX,
         y: newY,
         xRatio,
-        yRatio
+        yRatio,
+        containerWidth: containerRect.width,
+        containerHeight: containerRect.height
       };
       
       this.saveSettings();
@@ -216,12 +218,14 @@ class DashboardManager {
       this.previewClock.style.right = `${x}px`;
       this.previewClock.style.top = `${y}px`;
       
-      // Save settings with ratios
+      // Save settings with ratios and container dimensions
       this.settings.position = {
         x,
         y,
         xRatio: pos.xRatio,
-        yRatio: pos.yRatio
+        yRatio: pos.yRatio,
+        containerWidth: containerRect.width,
+        containerHeight: containerRect.height
       };
       
       this.saveSettings();
