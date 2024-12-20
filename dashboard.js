@@ -1,10 +1,26 @@
 class DashboardManager {
   constructor() {
+    this.settings = {
+      enabled: true,
+      position: { 
+        corner: 'top-right' // Default corner
+      },
+      format24h: false,
+      showSeconds: false,
+      showDate: false,
+      theme: 'minimal',
+      fontSize: 16,
+      opacity: 80,
+      textColor: '#ffffff',
+      bgColor: '#000000'
+    };
+
     this.initializeElements();
-    this.setupDragAndDrop();
     this.setupEventListeners();
     this.loadSettings();
     this.startPreviewClock();
+    this.settingsPreviewClock = document.getElementById('settingsPreviewClock');
+    this.startSettingsPreview();
   }
 
   initializeElements() {
@@ -31,6 +47,9 @@ class DashboardManager {
     this.importBtn = document.getElementById('importSettings');
     this.settingsFile = document.getElementById('settingsFile');
     this.resetAllBtn = document.getElementById('resetAll');
+    
+    // Add position buttons
+    this.positionButtons = document.querySelectorAll('.position-btn');
   }
 
   setupEventListeners() {
@@ -55,9 +74,12 @@ class DashboardManager {
     // General controls
     this.clockEnabled.addEventListener('change', () => this.updateSettings());
     
-    // Position presets
-    document.querySelectorAll('.preset-btn').forEach(btn => {
-      btn.addEventListener('click', () => this.handlePresetPosition(btn.dataset.position));
+    // Position buttons
+    this.positionButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        const position = button.dataset.position;
+        this.handlePositionChange(position);
+      });
     });
     
     // Backup controls
@@ -67,169 +89,36 @@ class DashboardManager {
     this.resetAllBtn.addEventListener('click', () => this.resetAllSettings());
   }
 
-  setupDragAndDrop() {
-    let isDragging = false;
-    let startX, startY;
-    let originalX, originalY;
-    const SNAP_THRESHOLD = 15; // Distance in pixels to trigger snapping
-    const PADDING = 20;
-
-    this.previewClock.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      startY = e.clientY;
-      originalX = parseInt(this.previewClock.style.right || 20);
-      originalY = parseInt(this.previewClock.style.top || 20);
-      
-      this.previewClock.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      
-      const deltaX = startX - e.clientX;
-      const deltaY = e.clientY - startY;
-      
-      const container = this.previewClock.parentElement;
-      const containerRect = container.getBoundingClientRect();
-      const clockRect = this.previewClock.getBoundingClientRect();
-      
-      // Calculate initial position
-      let newX = Math.max(
-        PADDING,
-        Math.min(
-          containerRect.width - clockRect.width - PADDING,
-          originalX + deltaX
-        )
-      );
-      
-      let newY = Math.max(
-        PADDING,
-        Math.min(
-          containerRect.height - clockRect.height - PADDING,
-          originalY + deltaY
-        )
-      );
-
-      // Edge snapping logic
-      const snapPoints = {
-        x: [
-          PADDING, // Left edge
-          containerRect.width - clockRect.width - PADDING, // Right edge
-          (containerRect.width - clockRect.width) / 2 // Center horizontally
-        ],
-        y: [
-          PADDING, // Top edge
-          containerRect.height - clockRect.height - PADDING, // Bottom edge
-          (containerRect.height - clockRect.height) / 2 // Center vertically
-        ]
-      };
-
-      // Snap to X positions
-      for (const snapX of snapPoints.x) {
-        if (Math.abs(newX - snapX) < SNAP_THRESHOLD) {
-          newX = snapX;
-          // Show snap indicator
-          this.showSnapIndicator('x', snapX);
-          break;
-        }
-      }
-
-      // Snap to Y positions
-      for (const snapY of snapPoints.y) {
-        if (Math.abs(newY - snapY) < SNAP_THRESHOLD) {
-          newY = snapY;
-          // Show snap indicator
-          this.showSnapIndicator('y', snapY);
-          break;
-        }
-      }
-      
-      this.previewClock.style.right = `${newX}px`;
-      this.previewClock.style.top = `${newY}px`;
-      
-      // Calculate ratios for the actual video player
-      const xRatio = (containerRect.width - newX - clockRect.width / 2) / containerRect.width;
-      const yRatio = (newY + clockRect.height / 2) / containerRect.height;
-      
-      this.settings.position = {
-        x: newX,
-        y: newY,
-        xRatio,
-        yRatio,
-        containerWidth: containerRect.width,
-        containerHeight: containerRect.height
-      };
-      
-      this.saveSettings();
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (isDragging) {
-        isDragging = false;
-        this.previewClock.style.cursor = 'move';
-        this.hideSnapIndicators();
-      }
-    });
-  }
-
-  handlePresetPosition(position) {
-    const PADDING = 20;
+  handlePositionChange(corner) {
     const container = this.previewClock.parentElement;
     const containerRect = container.getBoundingClientRect();
-    
-    // Define positions using ratios (0 = left, 0.5 = center, 1 = right)
-    const positions = {
-      'top-left': { xRatio: 1, yRatio: 0 },      // Inverted because we're using right alignment
-      'top-center': { xRatio: 0.5, yRatio: 0 },
-      'top-right': { xRatio: 0, yRatio: 0 },     // Inverted because we're using right alignment
-      'middle-left': { xRatio: 1, yRatio: 0.5 },  // Inverted because we're using right alignment
-      'middle-center': { xRatio: 0.5, yRatio: 0.5 },
-      'middle-right': { xRatio: 0, yRatio: 0.5 }, // Inverted because we're using right alignment
-      'bottom-left': { xRatio: 1, yRatio: 1 },    // Inverted because we're using right alignment
-      'bottom-center': { xRatio: 0.5, yRatio: 1 },
-      'bottom-right': { xRatio: 0, yRatio: 1 }    // Inverted because we're using right alignment
-    };
+    const clockRect = this.previewClock.getBoundingClientRect();
+    const PADDING = 20;
 
-    const pos = positions[position];
-    if (pos) {
-      let x, y;
+    // Update button states
+    this.positionButtons.forEach(button => {
+      button.setAttribute('data-active', button.dataset.position === corner);
+    });
 
-      // Calculate y position
-      if (pos.yRatio === 0) { // Top
-        y = PADDING;
-      } else if (pos.yRatio === 0.5) { // Middle
-        y = (containerRect.height / 2) - (this.previewClock.offsetHeight / 2);
-      } else { // Bottom
-        y = containerRect.height - this.previewClock.offsetHeight - PADDING;
-      }
-
-      // Calculate x position (using right alignment)
-      if (pos.xRatio === 0) { // Right
-        x = PADDING;
-      } else if (pos.xRatio === 0.5) { // Center
-        x = (containerRect.width / 2) - (this.previewClock.offsetWidth / 2);
-        x = containerRect.width - x - this.previewClock.offsetWidth; // Convert to right alignment
-      } else { // Left
-        x = containerRect.width - this.previewClock.offsetWidth - PADDING;
-      }
-
-      // Update preview
-      this.previewClock.style.right = `${x}px`;
-      this.previewClock.style.top = `${y}px`;
-      
-      // Save settings with ratios and container dimensions
-      this.settings.position = {
-        x,
-        y,
-        xRatio: pos.xRatio,
-        yRatio: pos.yRatio,
-        containerWidth: containerRect.width,
-        containerHeight: containerRect.height
-      };
-      
-      this.saveSettings();
+    // Position the clock
+    switch (corner) {
+      case 'top-left':
+        this.previewClock.style.left = `${PADDING}px`;
+        this.previewClock.style.top = `${PADDING}px`;
+        break;
+      case 'top-center':
+        this.previewClock.style.left = `${(containerRect.width - clockRect.width) / 2}px`;
+        this.previewClock.style.top = `${PADDING}px`;
+        break;
+      case 'top-right':
+        this.previewClock.style.left = `${containerRect.width - clockRect.width - PADDING}px`;
+        this.previewClock.style.top = `${PADDING}px`;
+        break;
     }
+
+    // Save settings
+    this.settings.position = { corner };
+    this.saveSettings();
   }
 
   updateValueDisplay(element, unit) {
@@ -280,7 +169,11 @@ class DashboardManager {
     const result = await chrome.storage.sync.get('clockSettings');
     this.settings = result.clockSettings || {
       enabled: true,
-      position: { x: 20, y: 20 },
+      position: { 
+        x: 20, 
+        y: 20,
+        corner: 'top-right' // Default to top-right
+      },
       format24h: false,
       showSeconds: false,
       showDate: false,
@@ -314,8 +207,17 @@ class DashboardManager {
     
     // Update preview clock
     this.updatePreviewClockAppearance();
-    this.previewClock.style.right = `${this.settings.position.x}px`;
+    this.previewClock.style.left = `${this.settings.position.x}px`;
     this.previewClock.style.top = `${this.settings.position.y}px`;
+    
+    // Update position button states
+    const activeCorner = this.settings.position.corner || 'top-right';
+    this.positionButtons.forEach(button => {
+      button.setAttribute('data-active', button.dataset.position === activeCorner);
+    });
+
+    // Position the preview clock
+    this.handlePositionChange(activeCorner);
   }
 
   updatePreviewClockAppearance() {
@@ -354,6 +256,21 @@ class DashboardManager {
     
     this.saveSettings();
     this.updatePreviewClockAppearance();
+    
+    // Update the settings preview
+    if (this.settingsPreviewClock) {
+      const opacity = this.settings.opacity / 100;
+      const backgroundColor = this.hexToRGBA(this.settings.bgColor, opacity);
+      
+      Object.assign(this.settingsPreviewClock.style, {
+        fontSize: `${this.settings.fontSize}px`,
+        color: this.settings.textColor,
+        backgroundColor,
+        fontFamily: this.getThemeFont(this.settings.theme),
+        padding: this.getThemePadding(this.settings.theme),
+        borderRadius: this.getThemeBorderRadius(this.settings.theme)
+      });
+    }
   }
 
   async saveSettings() {
@@ -436,6 +353,168 @@ class DashboardManager {
     indicators.forEach(indicator => {
       indicator.style.opacity = '0';
     });
+  }
+
+  setupDragAndDrop() {
+    let isDragging = false;
+    let startX, startY;
+    let originalX, originalY;
+    
+    this.previewClock.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = this.previewClock.getBoundingClientRect();
+      originalX = rect.left;
+      originalY = rect.top;
+      
+      this.previewClock.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      const container = this.previewClock.parentElement;
+      const containerRect = container.getBoundingClientRect();
+      const clockRect = this.previewClock.getBoundingClientRect();
+      
+      let newX = Math.max(
+        0,
+        Math.min(
+          containerRect.width - clockRect.width,
+          originalX + deltaX - containerRect.left
+        )
+      );
+      
+      let newY = Math.max(
+        0,
+        Math.min(
+          containerRect.height - clockRect.height,
+          originalY + deltaY - containerRect.top
+        )
+      );
+
+      this.updatePosition(newX, newY);
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        this.previewClock.style.cursor = 'move';
+        this.saveSettings();
+      }
+    });
+  }
+
+  setupDirectionalControls() {
+    const MOVE_STEP = 10; // pixels to move per click
+    
+    document.querySelectorAll('.control-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const direction = btn.dataset.direction;
+        const container = this.previewClock.parentElement;
+        const containerRect = container.getBoundingClientRect();
+        const clockRect = this.previewClock.getBoundingClientRect();
+        const currentX = clockRect.left - containerRect.left;
+        const currentY = clockRect.top - containerRect.top;
+
+        let newX = currentX;
+        let newY = currentY;
+
+        switch (direction) {
+          case 'up':
+            newY = Math.max(0, currentY - MOVE_STEP);
+            break;
+          case 'down':
+            newY = Math.min(containerRect.height - clockRect.height, currentY + MOVE_STEP);
+            break;
+          case 'left':
+            newX = Math.max(0, currentX - MOVE_STEP);
+            break;
+          case 'right':
+            newX = Math.min(containerRect.width - clockRect.width, currentX + MOVE_STEP);
+            break;
+          case 'center':
+            newX = (containerRect.width - clockRect.width) / 2;
+            newY = (containerRect.height - clockRect.height) / 2;
+            break;
+        }
+
+        this.updatePosition(newX, newY);
+        this.saveSettings();
+      });
+    });
+  }
+
+  updatePosition(x, y) {
+    this.previewClock.style.left = `${x}px`;
+    this.previewClock.style.top = `${y}px`;
+    
+    // Update settings with position ratios
+    const container = this.previewClock.parentElement;
+    const containerRect = container.getBoundingClientRect();
+    
+    this.settings.position = {
+      xRatio: x / containerRect.width,
+      yRatio: y / containerRect.height
+    };
+  }
+
+  startSettingsPreview() {
+    const updatePreview = () => {
+      if (this.settingsPreviewClock) {
+        this.settingsPreviewClock.textContent = this.formatTime(new Date());
+        
+        // Apply current settings to preview
+        const opacity = this.settings.opacity / 100;
+        const backgroundColor = this.hexToRGBA(this.settings.bgColor, opacity);
+        
+        Object.assign(this.settingsPreviewClock.style, {
+          fontSize: `${this.settings.fontSize}px`,
+          color: this.settings.textColor,
+          backgroundColor,
+          fontFamily: this.getThemeFont(this.settings.theme),
+          padding: this.getThemePadding(this.settings.theme),
+          borderRadius: this.getThemeBorderRadius(this.settings.theme)
+        });
+      }
+    };
+    
+    updatePreview();
+    setInterval(updatePreview, 1000);
+  }
+
+  getThemeFont(theme) {
+    const themes = {
+      minimal: 'Roboto, Arial, sans-serif',
+      modern: 'Inter, sans-serif',
+      retro: '"Digital-7", monospace',
+      elegant: 'Playfair Display, serif'
+    };
+    return themes[theme] || themes.minimal;
+  }
+
+  getThemePadding(theme) {
+    const paddings = {
+      minimal: '4px 8px',
+      modern: '6px 12px',
+      retro: '4px 8px',
+      elegant: '6px 12px'
+    };
+    return paddings[theme] || paddings.minimal;
+  }
+
+  getThemeBorderRadius(theme) {
+    const radiuses = {
+      minimal: '4px',
+      modern: '8px',
+      retro: '0',
+      elegant: '16px'
+    };
+    return radiuses[theme] || radiuses.minimal;
   }
 }
 

@@ -7,156 +7,182 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-  <div class="dashboard-container">
-    <header>
-      <div class="logo">
-        <img src="assets/icons/icon48.png" alt="YouTube Clock">
-        <h1>YouTube Clock Settings</h1>
+  <div class="page-layout">
+    <!-- Left Ad Container -->
+    <div class="ad-container left">
+      <div class="ad-slot">
+        <span class="material-icons">workspace_premium</span>
+        <p>Future Sponsorship Space</p>
       </div>
-    </header>
+    </div>
 
-    <main>
-      <div class="settings-grid">
-        <!-- Preview Section -->
-        <section class="preview-section">
-          <h2>Clock Preview</h2>
-          <div class="preview-container">
-            <div class="youtube-mock">
-              <div class="video-area">
-                <div id="previewClock" class="preview-clock" draggable="true">12:00 PM</div>
-              </div>
-              <div class="controls-overlay"></div>
-            </div>
-          </div>
-          <div class="position-presets">
-            <button class="preset-btn" data-position="top-left" title="Top Left">↖️</button>
-            <button class="preset-btn" data-position="top-center" title="Top Center">⬆️</button>
-            <button class="preset-btn" data-position="top-right" title="Top Right">↗️</button>
-            <button class="preset-btn" data-position="middle-left" title="Middle Left">⬅️</button>
-            <button class="preset-btn" data-position="middle-center" title="Center">⏺️</button>
-            <button class="preset-btn" data-position="middle-right" title="Middle Right">➡️</button>
-            <button class="preset-btn" data-position="bottom-left" title="Bottom Left">↙️</button>
-            <button class="preset-btn" data-position="bottom-center" title="Bottom Center">⬇️</button>
-            <button class="preset-btn" data-position="bottom-right" title="Bottom Right">↘️</button>
-          </div>
-        </section>
-
-        <!-- Settings Sections -->
-        <div class="settings-sections">
-          <section class="settings-section">
-            <h2>
-              <span class="material-icons">schedule</span>
-              Display Settings
-            </h2>
-            <div class="setting-group">
-              <div class="setting-item">
-                <div class="setting-label">24-hour Format</div>
-                <label class="switch">
-                  <input type="checkbox" id="format24h">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="setting-item">
-                <div class="setting-label">Show Seconds</div>
-                <label class="switch">
-                  <input type="checkbox" id="showSeconds">
-                  <span class="slider"></span>
-                </label>
-              </div>
-              <div class="setting-item">
-                <div class="setting-label">Show Date</div>
-                <label class="switch">
-                  <input type="checkbox" id="showDate">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          <section class="settings-section">
-            <h2>
-              <span class="material-icons">palette</span>
-              Appearance
-            </h2>
-            <div class="setting-group">
-              <div class="setting-item">
-                <div class="setting-label">Theme</div>
-                <select id="clockTheme" class="theme-select">
-                  <option value="minimal">Minimal</option>
-                  <option value="modern">Modern</option>
-                  <option value="retro">Retro Digital</option>
-                  <option value="elegant">Elegant</option>
-                </select>
-              </div>
-              
-              <div class="setting-item">
-                <div class="setting-label">Font Size</div>
-                <div class="slider-container">
-                  <input type="range" id="fontSize" min="12" max="32" step="2">
-                  <span class="value-display">16px</span>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-label">Opacity</div>
-                <div class="slider-container">
-                  <input type="range" id="opacity" min="20" max="100" step="10">
-                  <span class="value-display">80%</span>
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-label">Text Color</div>
-                <input type="color" id="textColor" value="#ffffff">
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-label">Background Color</div>
-                <input type="color" id="bgColor" value="#000000">
-              </div>
-            </div>
-          </section>
-
-          <section class="settings-section">
-            <h2>
-              <span class="material-icons">settings</span>
-              General
-            </h2>
-            <div class="setting-group">
-              <div class="setting-item">
-                <div class="setting-label">Enable Clock</div>
-                <label class="switch">
-                  <input type="checkbox" id="clockEnabled">
-                  <span class="slider"></span>
-                </label>
-              </div>
-            </div>
-          </section>
-
-          <section class="settings-section">
-            <h2>
-              <span class="material-icons">backup</span>
-              Backup & Restore
-            </h2>
-            <div class="button-group">
-              <button id="exportSettings" class="secondary-button">
-                <span class="material-icons">file_download</span>
-                Export Settings
-              </button>
-              <button id="importSettings" class="secondary-button">
-                <span class="material-icons">file_upload</span>
-                Import Settings
-              </button>
-              <input type="file" id="settingsFile" accept=".json" style="display: none;">
-            </div>
-            <button id="resetAll" class="warning-button">
-              <span class="material-icons">restart_alt</span>
-              Reset All Settings
-            </button>
-          </section>
+    <!-- Main Dashboard -->
+    <div class="dashboard-container">
+      <header>
+        <div class="logo">
+          <img src="assets/icons/icon48.png" alt="YouTube Clock">
+          <h1>YouTube Clock Settings</h1>
         </div>
+      </header>
+
+      <main>
+        <div class="settings-grid">
+          <!-- Settings Sections -->
+          <div class="settings-sections">
+            <section class="settings-section">
+              <h2>
+                <span class="material-icons">schedule</span>
+                Display Settings
+              </h2>
+              <div class="setting-group">
+                <div class="setting-item">
+                  <div class="setting-label">24-hour Format</div>
+                  <label class="switch">
+                    <input type="checkbox" id="format24h">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-label">Show Seconds</div>
+                  <label class="switch">
+                    <input type="checkbox" id="showSeconds">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="setting-item">
+                  <div class="setting-label">Show Date</div>
+                  <label class="switch">
+                    <input type="checkbox" id="showDate">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2>
+                <span class="material-icons">palette</span>
+                Appearance
+              </h2>
+              
+              <!-- Add preview at the top of appearance section -->
+              <div class="clock-preview-container">
+                <div class="preview-header">
+                  <div class="preview-label">Live Preview</div>
+                  <div class="preview-hint">
+                    <span class="material-icons">info</span>
+                    <span class="hint-text">Updates in real-time as you change settings</span>
+                  </div>
+                </div>
+                <div class="preview-background">
+                  <div id="settingsPreviewClock" class="settings-preview-clock">
+                    12:00 PM
+                  </div>
+                </div>
+              </div>
+
+              <div class="setting-group">
+                <div class="setting-item">
+                  <div class="setting-label">Theme</div>
+                  <select id="clockTheme" class="theme-select">
+                    <option value="minimal">Minimal</option>
+                    <option value="modern">Modern</option>
+                    <option value="retro">Retro Digital</option>
+                    <option value="elegant">Elegant</option>
+                  </select>
+                </div>
+                
+                <div class="setting-item">
+                  <div class="setting-label">Font Size</div>
+                  <div class="slider-container">
+                    <input type="range" id="fontSize" min="12" max="32" step="2">
+                    <span class="value-display">16px</span>
+                  </div>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-label">Opacity</div>
+                  <div class="slider-container">
+                    <input type="range" id="opacity" min="20" max="100" step="10">
+                    <span class="value-display">80%</span>
+                  </div>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-label">Text Color</div>
+                  <input type="color" id="textColor" value="#ffffff">
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-label">Background Color</div>
+                  <input type="color" id="bgColor" value="#000000">
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2>
+                <span class="material-icons">settings</span>
+                General
+              </h2>
+              <div class="setting-group">
+                <div class="setting-item">
+                  <div class="setting-label">Enable Clock</div>
+                  <label class="switch">
+                    <input type="checkbox" id="clockEnabled">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2>
+                <span class="material-icons">backup</span>
+                Backup & Restore
+              </h2>
+              <div class="button-group">
+                <button id="exportSettings" class="secondary-button">
+                  <span class="material-icons">file_download</span>
+                  Export Settings
+                </button>
+                <button id="importSettings" class="secondary-button">
+                  <span class="material-icons">file_upload</span>
+                  Import Settings
+                </button>
+                <input type="file" id="settingsFile" accept=".json" style="display: none;">
+              </div>
+              <button id="resetAll" class="warning-button">
+                <span class="material-icons">restart_alt</span>
+                Reset All Settings
+              </button>
+            </section>
+
+            <section class="preview-section">
+              <h2>
+                <span class="material-icons">drag_indicator</span>
+                Clock Position
+              </h2>
+              <div class="info-message">
+                <span class="material-icons">touch_app</span>
+                <div>
+                  <p>The clock can be freely positioned by dragging it when YouTube is in fullscreen or theater mode. Your chosen position will be saved automatically.</p>
+                  <p style="margin-top: 8px; color: var(--yt-text-secondary);">Tip: Double-click the clock to reset it to the center position.</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Right Ad Container -->
+    <div class="ad-container right">
+      <div class="ad-slot">
+        <span class="material-icons">workspace_premium</span>
+        <p>Future Sponsorship Space</p>
       </div>
-    </main>
+    </div>
   </div>
   <script src="dashboard.js"></script>
 </body>

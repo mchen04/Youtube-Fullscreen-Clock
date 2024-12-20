@@ -2,9 +2,10 @@
   --yt-red: #ff0000;
   --yt-dark-bg: #0f0f0f;
   --yt-surface: #212121;
+  --yt-surface-2: #282828;
   --yt-text-primary: #fff;
   --yt-text-secondary: #aaa;
-  --yt-hover: #272727;
+  --yt-hover: #383838;
   --yt-border: #3f3f3f;
   --yt-focus-color: #3ea6ff;
 }
@@ -18,13 +19,13 @@ body {
 }
 
 .popup-container {
+  background: var(--yt-surface);
   padding: 16px;
 }
 
 /* Header */
 header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
   padding-bottom: 16px;
@@ -38,98 +39,76 @@ header {
 }
 
 .logo img {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
 }
 
 .logo h1 {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
-}
-
-/* Current Time Preview */
-.current-time {
-  background: var(--yt-surface);
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-#previewClock {
-  font-size: 24px;
-  font-weight: 500;
-}
-
-/* Quick Actions */
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.action-btn {
-  background: var(--yt-surface);
-  border: none;
   color: var(--yt-text-primary);
-  padding: 8px;
-  border-radius: 8px;
-  cursor: pointer;
+}
+
+/* Preview Section */
+.preview-section {
+  background: var(--yt-surface-2);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.preview-background {
+  background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6));
+  padding: 24px;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 4px;
-  transition: background-color 0.2s;
+  min-height: 80px;
 }
 
-.action-btn:hover {
-  background: var(--yt-hover);
+.popup-preview-clock {
+  display: inline-flex;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+  transition: all 0.2s ease;
 }
 
-.action-btn .material-icons {
-  font-size: 20px;
-}
-
-.action-btn .label {
-  font-size: 12px;
-  color: var(--yt-text-secondary);
-}
-
-/* Footer */
-footer {
+/* Settings Section */
+.settings-section {
+  background: var(--yt-surface-2);
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px;
+}
+
+.setting-info {
+  display: flex;
+  align-items: center;
   gap: 12px;
 }
 
-.primary-button {
-  background: var(--yt-red);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 20px;
-  cursor: pointer;
+.setting-info .material-icons {
+  font-size: 20px;
+  color: var(--yt-focus-color);
+}
+
+.setting-label {
   font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: opacity 0.2s;
-}
-
-.primary-button:hover {
-  opacity: 0.9;
-}
-
-.shortcuts-hint {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: var(--yt-text-secondary);
-  font-size: 12px;
+  color: var(--yt-text-primary);
 }
 
 /* Switch */
@@ -171,9 +150,53 @@ footer {
 }
 
 input:checked + .slider {
-  background-color: var(--yt-red);
+  background-color: var(--yt-focus-color);
 }
 
 input:checked + .slider:before {
   transform: translateX(20px);
+}
+
+/* Footer */
+footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dashboard-button {
+  background: var(--yt-focus-color);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.dashboard-button:hover {
+  background: var(--yt-focus-color);
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.shortcut-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--yt-text-secondary);
+  font-size: 12px;
+  padding: 8px;
+  background: var(--yt-surface-2);
+  border-radius: 8px;
+}
+
+.shortcut-hint .material-icons {
+  font-size: 16px;
 } 

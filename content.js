@@ -5,9 +5,8 @@ class YouTubeFullscreenClock {
     this.settings = {
       enabled: true,
       position: { 
-        x: 20, 
-        y: 20,
-        corner: 'top-left'
+        xRatio: 0.5,
+        yRatio: 0.1
       },
       format24h: false,
       showSeconds: false,
@@ -43,59 +42,110 @@ class YouTubeFullscreenClock {
 
     this.clockElement = document.createElement('div');
     this.clockElement.id = 'yt-fullscreen-clock';
+    this.clockElement.style.cursor = 'move';
     this.updateClockAppearance();
     this.updateClockPosition();
     this.startClock();
+    this.setupDragAndDrop();
+  }
+
+  setupDragAndDrop() {
+    let isDragging = false;
+    let startX, startY;
+    let originalX, originalY;
+
+    this.clockElement.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      const rect = this.clockElement.getBoundingClientRect();
+      originalX = rect.left;
+      originalY = rect.top;
+      
+      this.clockElement.style.cursor = 'grabbing';
+      e.preventDefault(); // Prevent text selection
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+      
+      const container = document.fullscreenElement || document.getElementById('player-theater-container');
+      if (!container) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const clockRect = this.clockElement.getBoundingClientRect();
+      
+      let newX = Math.max(
+        0,
+        Math.min(
+          containerRect.width - clockRect.width,
+          originalX + deltaX - containerRect.left
+        )
+      );
+      
+      let newY = Math.max(
+        0,
+        Math.min(
+          containerRect.height - clockRect.height,
+          originalY + deltaY - containerRect.top
+        )
+      );
+
+      // Calculate ratios based on center of the clock
+      const xRatio = (newX + clockRect.width / 2) / containerRect.width;
+      const yRatio = newY / containerRect.height;
+
+      // Update position
+      this.clockElement.style.left = `${newX}px`;
+      this.clockElement.style.top = `${newY}px`;
+
+      // Save position as ratios
+      this.settings.position = {
+        xRatio,
+        yRatio
+      };
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        this.clockElement.style.cursor = 'move';
+        this.saveSettings();
+      }
+    });
   }
 
   updateClockPosition() {
     if (!this.clockElement) return;
 
-    const PADDING = 20;
     const container = document.fullscreenElement || document.getElementById('player-theater-container');
-    
     if (!container) return;
     
     const containerRect = container.getBoundingClientRect();
     const clockRect = this.clockElement.getBoundingClientRect();
 
-    let x, y;
+    // Calculate position based on ratios
+    let x = this.settings.position.xRatio * containerRect.width;
+    let y = this.settings.position.yRatio * containerRect.height;
 
-    // Handle preset corner positions
-    switch (this.settings.position.corner) {
-      case 'top-left':
-        x = PADDING;
-        y = PADDING;
-        break;
-      case 'top-right':
-        x = containerRect.width - clockRect.width - PADDING;
-        y = PADDING;
-        break;
-      case 'bottom-left':
-        x = PADDING;
-        y = containerRect.height - clockRect.height - PADDING;
-        break;
-      case 'bottom-right':
-        x = containerRect.width - clockRect.width - PADDING;
-        y = containerRect.height - clockRect.height - PADDING;
-        break;
-      case 'top-center':
-        x = (containerRect.width - clockRect.width) / 2;
-        y = PADDING;
-        break;
-      default:
-        // Custom position - use saved x,y coordinates
-        x = this.settings.position.x;
-        y = this.settings.position.y;
+    // Center horizontally if using center ratio
+    if (this.settings.position.xRatio === 0.5) {
+      x = x - (clockRect.width / 2);
     }
 
-    // Apply the calculated position
+    // Apply position
     this.clockElement.style.left = `${x}px`;
     this.clockElement.style.top = `${y}px`;
     
-    // Update stored position
-    this.settings.position.x = x;
-    this.settings.position.y = y;
+    Object.assign(this.clockElement.style, {
+      position: 'fixed',
+      zIndex: '9999',
+      transform: 'none',
+      margin: '0'
+    });
   }
 
   updateClockAppearance() {
@@ -240,6 +290,9 @@ class YouTubeFullscreenClock {
   }
 
   handleSettingsUpdate(newSettings) {
+    console.log('Received new settings:', newSettings);
+    console.log('New position corner:', newSettings.position.corner);
+    
     this.settings = newSettings;
     this.updateClockPosition();
     this.updateClockAppearance();
@@ -298,6 +351,14 @@ class YouTubeFullscreenClock {
     if (this.clockElement.parentElement) {
       this.clockElement.parentElement.removeChild(this.clockElement);
     }
+  }
+
+  // Add this method to get preview dimensions
+  getPreviewDimensions() {
+    return {
+      width: 380,  // Preview container width
+      height: 214  // Preview container height (16:9 ratio)
+    };
   }
 }
 

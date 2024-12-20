@@ -2,53 +2,74 @@
 <html>
 <head>
   <meta charset="UTF-8">
+  <title>YouTube Clock</title>
   <link rel="stylesheet" href="styles/popup.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <div class="popup-container">
+    <!-- Header with logo -->
     <header>
       <div class="logo">
         <img src="assets/icons/icon48.png" alt="YouTube Clock">
         <h1>YouTube Clock</h1>
       </div>
-      <div class="quick-settings">
-        <label class="switch" title="Enable/Disable Clock">
+    </header>
+
+    <!-- Preview Section -->
+    <div class="preview-section">
+      <div class="preview-background">
+        <div id="popupPreviewClock" class="popup-preview-clock">
+          12:00 PM
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="settings-section">
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="material-icons">power_settings_new</span>
+          <label class="setting-label">Enable Clock</label>
+        </div>
+        <label class="switch">
           <input type="checkbox" id="clockEnabled">
           <span class="slider"></span>
         </label>
       </div>
-    </header>
 
-    <main>
-      <div class="current-time">
-        <div id="previewClock">12:00 PM</div>
-      </div>
-
-      <div class="quick-actions">
-        <button class="action-btn" id="toggleFormat" title="Toggle 12/24 Hour">
+      <div class="setting-item">
+        <div class="setting-info">
           <span class="material-icons">schedule</span>
-          <span class="label">24h</span>
-        </button>
-        <button class="action-btn" id="toggleSeconds" title="Toggle Seconds">
-          <span class="material-icons">timer</span>
-          <span class="label">Sec</span>
-        </button>
-        <button class="action-btn" id="toggleDate" title="Toggle Date">
-          <span class="material-icons">calendar_today</span>
-          <span class="label">Date</span>
-        </button>
+          <label class="setting-label">24-hour Format</label>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="format24h">
+          <span class="slider"></span>
+        </label>
       </div>
-    </main>
 
+      <div class="setting-item">
+        <div class="setting-info">
+          <span class="material-icons">timer</span>
+          <label class="setting-label">Show Seconds</label>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="showSeconds">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Footer -->
     <footer>
-      <button id="openDashboard" class="primary-button">
+      <button id="openDashboard" class="dashboard-button">
         <span class="material-icons">settings</span>
-        Open Settings
+        More Settings
       </button>
-      <div class="shortcuts-hint">
+      <div class="shortcut-hint">
         <span class="material-icons">keyboard</span>
-        Alt + C to toggle
+        <span>Press Alt + C to toggle clock</span>
       </div>
     </footer>
   </div>
