@@ -1,78 +1,70 @@
 # YouTube Fullscreen Clock
 
-A customizable clock overlay for YouTube's fullscreen and theater modes.
+![YouTube Fullscreen Clock Logo](assets/icons/icon128.png)
+
+## Overview
+The **YouTube Fullscreen Clock** is a browser extension designed to enhance your viewing experience on YouTube by displaying a customizable clock overlay during fullscreen playback. Whether you're watching tutorials, live streams, or your favorite videos, this extension ensures you always know the time without leaving the fullscreen mode.
 
 ## Features
-
-### Clock Display
-- Real-time clock display in YouTube fullscreen and theater modes
-- Multiple time formats:
-  - 12/24 hour format
-  - Optional seconds display
-  - Optional date display
-- Customizable position with drag-and-drop
-- Position presets (corners, edges, center)
-
-### Themes
-- **Minimal**: Clean, simple design
-- **Modern**: Contemporary look with rounded corners
-- **Retro**: Digital clock style
-- **Elegant**: Sophisticated design with serif font
-
-### Customization
-- Font size adjustment (12px - 32px)
-- Background opacity (20% - 100%)
-- Custom text color
-- Custom background color
-- Multiple position presets
-
-### Keyboard Shortcuts
-| Shortcut | Action |
-|----------|--------|
-| Alt + C | Toggle clock visibility |
-| Alt + F | Toggle time format (12/24h) |
+- **Customizable Clock**: Adjust the clock's position, color, and size to fit your preferences.
+- **Seamless Integration**: Automatically activates when you enter fullscreen mode on YouTube.
+- **Lightweight**: Minimal impact on performance and resource usage.
+- **User-Friendly Interface**: Easy-to-use popup for settings adjustments.
 
 ## Installation
+### For Chrome
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Youtube-Fullscreen-Clock
+   ```
+3. Open Chrome and go to `chrome://extensions/`.
+4. Enable "Developer mode" in the top right corner.
+5. Click "Load unpacked" and select the project directory.
 
-1. Download from Chrome Web Store (link coming soon)
-   
-   OR
-
-2. Manual Installation:
-   - Clone this repository
-   - Open Chrome and go to `chrome://extensions/`
-   - Enable "Developer mode"
-   - Click "Load unpacked"
-   - Select the extension directory
+### For Firefox
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Youtube-Fullscreen-Clock
+   ```
+3. Open Firefox and go to `about:debugging#/runtime/this-firefox`.
+4. Click "Load Temporary Add-on" and select the `manifest.json` file.
 
 ## Usage
+- Once installed, the clock will automatically appear when you enter fullscreen mode on YouTube.
+- Access the extension's settings by clicking the extension icon in the toolbar to customize the clock display.
 
-### Quick Access
-- Click the extension icon in your toolbar
-- Use the quick toggle to enable/disable the clock
-- Click "Open Dashboard" for full settings
+## Permissions
+This extension requires the following permissions:
+- **storage**: To save user settings and preferences.
+- **activeTab**: To interact with the current tab and display the clock.
+- **https://*.carbonads.com/**: For displaying ads (if applicable).
 
-### Dashboard Settings
-1. **Clock Position**
-   - Drag the clock in the preview area
-   - Use position presets for quick placement
-   
-2. **Display Format**
-   - Toggle 24-hour format
-   - Enable/disable seconds
-   - Show/hide date
+## Contributing
+We welcome contributions! If you have suggestions for improvements or find bugs, please open an issue or submit a pull request. 
 
-3. **Appearance**
-   - Select from 4 themes
-   - Adjust font size
-   - Set opacity
-   - Choose custom colors
+### Guidelines for Contributions
+- Ensure your code adheres to the project's coding standards.
+- Write clear commit messages.
+- Include tests for new features or bug fixes.
 
-4. **Backup & Restore**
-   - Export settings to JSON
-   - Import previous settings
-   - Reset to defaults
+## License
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Development
+## Acknowledgments
+- Inspired by the need for a better viewing experience on YouTube.
+- Special thanks to the open-source community for their invaluable resources and support.
 
-### Project Structure 
+## Contact
+For any inquiries or support, please reach out to [your-email@example.com](mailto:your-email@example.com).
+
+---
+
+**Enjoy your enhanced YouTube experience with the YouTube Fullscreen Clock!**
